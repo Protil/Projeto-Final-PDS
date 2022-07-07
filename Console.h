@@ -27,7 +27,9 @@ protected:
 	{
 		lab.SetVariaveis();	
 		listaPos = lab.posicoesECores();
-		iteracaoAtual.push_back(listaPos[4302]);
+		// Aparentemente aqui so tem as posicoes que não sao parede, mas nao tenho certeza
+		int index = rand() % (listaPos.size()+ 1);
+		iteracaoAtual.push_back(listaPos[index]);
 
 		for (Pixel i : listaPos)
 		{
@@ -129,7 +131,7 @@ protected:
 
 		controle++;
 
-		this_thread::sleep_for(1ms);
+		this_thread::sleep_for(10ms);
 
 		return true;
 	}
