@@ -16,6 +16,10 @@ class Console : public olcConsoleGameEngine
 private:
 	CriarLabirinto lab;
 	vector<Pixel> listaPos;
+	vector<Pixel> iteracaoAtual;
+	vector<Pixel> proxIteracao;
+	vector<Pixel> listaContaminada;
+
 
 protected:
 	// Called by olcConsoleGameEngine
@@ -23,6 +27,7 @@ protected:
 	{
 		lab.SetVariaveis();	
 		listaPos = lab.posicoesECores();
+		iteracaoAtual.push_back(listaPos[4302]);
 
 		for (Pixel i : listaPos)
 		{
@@ -43,7 +48,7 @@ protected:
 	bool CoordenadaEParede(Coordenada coord, vector<Pixel>v)
 	{
 		bool statusParede = true;
-
+		
 		for (Pixel i : v)
 		{
 			if (i.coord.posx == coord.posx && i.coord.posy == coord.posy)
@@ -56,45 +61,75 @@ protected:
 		return statusParede;
 	}
 
-
-	void ReproduzirFungo(vector<Pixel> lab)
+	bool CoordenadaJaContaminada(Coordenada coord, vector<Pixel>v)
 	{
-		vector<Coordenada> vizinhas;
+		bool statusContamicao = false;
 
-		for (int c = 0; c < 30; c++)
+		for (Pixel i : v)
 		{
-			for (Coordenada i : lab[c].coord.GetPosVizinhas(9000, 9000))
+			if (i.coord.posx == coord.posx && i.coord.posy == coord.posy)
 			{
-				vizinhas.push_back(i);
+				statusContamicao = true;
 			}
 		}
-	
 
 
-		vector<Pixel> criadas;
-
-		for (Coordenada i : vizinhas)
-		{
-			if (!CoordenadaEParede(i, lab))
-			{
-				posicoesASeremOCupadas.push_back(Pixel(i, 9608, 7));
-			}
-		}
+		return statusContamicao;
 	}
 
 
-	
+	vector<Pixel> ReproduzirFungo(vector<Pixel> lab)
+	{
+		vector<Pixel> pixelsVizinhos;
+
+		for (Pixel pixel : lab)
+		{
+			for (Coordenada coord : pixel.coord.GetPosVizinhas(2000,2000))
+			{
+				if (!CoordenadaEParede(coord, listaPos) && !CoordenadaJaContaminada(coord, listaContaminada))
+				{
+					Pixel p = Pixel(coord, 9608, 8);
+					pixelsVizinhos.push_back(p);
+					listaContaminada.push_back(p);
+				}
+			}
+		}
+
+		return pixelsVizinhos;
+
+	}
 
 	// Called by olcConsoleGameEngine
+	int controle = 0;
 	virtual bool OnUserUpdate(float fElapsedTime)
 	{
-		listaPos = lab.posicoesECores();
-		ReproduzirFungo(listaPos);
-		for (Pixel i : posicoesASeremOCupadas)
+		if (controle == 0)
 		{
-			i.cor = 2;
-			Draw(i.coord.posx, i.coord.posy, i.tipoPixel, i.cor);
+			for (Pixel i : iteracaoAtual)
+			{
+				i.cor = 2;
+				Draw(i.coord.posx, i.coord.posy, i.tipoPixel, i.cor);
+			}
+			proxIteracao = ReproduzirFungo(iteracaoAtual);
+
 		}
+		else 
+		{
+			iteracaoAtual.clear();
+			iteracaoAtual = proxIteracao;
+			for (Pixel i : proxIteracao)
+			{
+				i.cor = 2;
+				Draw(i.coord.posx, i.coord.posy, i.tipoPixel, i.cor);
+			}
+			proxIteracao.clear();
+			proxIteracao = ReproduzirFungo(iteracaoAtual);
+		}
+		
+
+		controle++;
+
+		this_thread::sleep_for(1ms);
 
 		return true;
 	}
