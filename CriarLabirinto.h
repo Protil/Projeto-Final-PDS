@@ -4,22 +4,9 @@
 #include <time.h>
 #include <vector>
 #include <vector>
+#include "Pixel.h"
 using namespace std;
 
-class Provisoria
-{
-public:
-
-	int posx;
-	int posy;
-	int tipo;
-	Provisoria(int _posx, int _posy, int _tipo)
-	{
-		posx = _posx;
-		posy = _posy;
-		tipo = _tipo;
-	}
-};
 
 class CriarLabirinto
 {
@@ -49,6 +36,6 @@ public:
 public:
 	// Called by olcConsoleGameEngine
 	void SetVariaveis();
-	vector<Provisoria> posicoesECores();
+	vector<Pixel> posicoesECores();
 };
 

@@ -91,40 +91,47 @@ void CriarLabirinto::SetVariaveis()
 	}
 }
 
-vector<Provisoria> CriarLabirinto::posicoesECores()
+vector<Pixel> CriarLabirinto::posicoesECores()
 {
-	vector<Provisoria> listaPos;
-
+	vector<Pixel> listaPos;
+	int cor = 15;
 	// Draw Maze
-	for (int x = 0; x <  m_nMazeWidth; x++)
+	for (int x = 0; x < m_nMazeWidth; x++)
 	{
-		for (int y = 0; y <  m_nMazeHeight; y++)
+		for (int y = 0; y < m_nMazeHeight; y++)
 		{
 			// Each cell is inflated by m_nPathWidth, so fill it in
-			for (int py = 0; py <  m_nPathWidth; py++)
-				for (int px = 0; px <  m_nPathWidth; px++)
+			for (int py = 0; py < m_nPathWidth; py++)
+				for (int px = 0; px < m_nPathWidth; px++)
 				{
-					if ( m_maze[y *  m_nMazeWidth + x] &  CELL_VISITED)
+					Coordenada coord;
+					if (m_maze[y * m_nMazeWidth + x] & CELL_VISITED)
 					{
-						listaPos.push_back(Provisoria(x * ( m_nPathWidth + 1) + px, y * ( m_nPathWidth + 1) + py, 0));
+						coord = Coordenada((x * (m_nPathWidth + 1) + px), (y * (m_nPathWidth + 1) + py));
+						listaPos.push_back(Pixel(coord, 9608, cor));
 					}
 					else
 					{
-						listaPos.push_back(Provisoria(x * ( m_nPathWidth + 1) + px, y * ( m_nPathWidth + 1) + py, 1));
+						coord = Coordenada((x * (m_nPathWidth + 1) + px), (y * (m_nPathWidth + 1) + py));
+						listaPos.push_back(Pixel(coord, 9608, cor));
 					}
 				}
 
 			// Draw passageways between cells
-			for (int p = 0; p <  m_nPathWidth; p++)
+			for (int p = 0; p < m_nPathWidth; p++)
 			{
-				if ( m_maze[y *  m_nMazeWidth + x] &  CELL_PATH_S)
+				Coordenada coord;
+
+				if (m_maze[y * m_nMazeWidth + x] & CELL_PATH_S)
 				{
-					listaPos.push_back(Provisoria(x * ( m_nPathWidth + 1) + p, y * ( m_nPathWidth + 1) +  m_nPathWidth, 3));
+					coord = Coordenada((x * (m_nPathWidth + 1) + p), (y * (m_nPathWidth + 1) + m_nPathWidth));
+					listaPos.push_back(Pixel(coord, 9608, cor));
 				}
 
-				if ( m_maze[y *  m_nMazeWidth + x] &  CELL_PATH_E)
+				if (m_maze[y * m_nMazeWidth + x] & CELL_PATH_E)
 				{
-					listaPos.push_back(Provisoria(x * ( m_nPathWidth + 1) +  m_nPathWidth, y * ( m_nPathWidth + 1) + p, 3));
+					coord = Coordenada((x * (m_nPathWidth + 1) + m_nPathWidth), (y * (m_nPathWidth + 1) + p));
+					listaPos.push_back(Pixel(coord, 9608, cor));
 				}
 			}
 		}
