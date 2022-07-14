@@ -1,9 +1,10 @@
 #include "Coordenada.h"
 
+// Coordenadas Padrões são invalidas
 Coordenada::Coordenada()
 {
-	posx = -1;
-	posy = -1;
+	posx = NULL;
+	posy = NULL;
 }
 
 Coordenada::Coordenada(int _posx, int _posy)
@@ -16,7 +17,7 @@ vector<Coordenada> Coordenada::GetPosVizinhas(int maxX, int maxY)
 {
 	vector<Coordenada> posVizinhas;
 
-	// Acha os blocos em uma cruz ao redor de da coordenada
+	// Acha os blocos em uma cruz ao redor de da coordenada 
 	if (posx + 1 < maxX)
 	{
 		posVizinhas.push_back(Coordenada(posx + 1, posy));
@@ -34,7 +35,7 @@ vector<Coordenada> Coordenada::GetPosVizinhas(int maxX, int maxY)
 		posVizinhas.push_back(Coordenada(posx, posy - 1));
 	}
 	
-	// Acha os blocos na diagonal do bloco
+	// Acha os blocos nas diagonais da coordenada
 	if (0 <= posx - 1 && 0 <= posy - 1)
 	{
 		posVizinhas.push_back(Coordenada(posx - 1, posy - 1));

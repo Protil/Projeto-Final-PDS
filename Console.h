@@ -5,10 +5,8 @@
 #include "Pixel.h"
 #include <algorithm>
 #include <math.h>
+#include "Bloop.h"
 using namespace std;
-
-
-
 
 class Console : public olcConsoleGameEngine
 {
@@ -23,38 +21,32 @@ private:
 
 
 protected:
-	// Called by olcConsoleGameEngine
 	int contador = 1;
 	vector<Pixel> posicoesASeremOCupadas;
 	vector<Pixel> todasAsPos;
 	vector<Pixel> posParedeOuBloob;
 	bool continuar = true;
+	Bloop bloob;
 
 	virtual bool OnUserCreate()
 	{
 		lab.SetVariaveis();	
 		listaPos = lab.posicoesECores();
-		// Aparentemente aqui so tem as posicoes que não sao parede, mas nao tenho certeza
 		int index = rand() % (listaPos.size()+ 1);
-		//int index = 4049;
 		int indexC1;
 		
+
 		float distancia;
+		int distanciaMinima = 150;
 		
 		do
 		{
 			indexC1 = rand() % (listaPos.size() + 1);
 
 			distancia = pow(pow(listaPos[index].coord.posx + listaPos[index].coord.posy, 2) + pow(listaPos[indexC1].coord.posx + listaPos[indexC1].coord.posy, 2), .5);
-		} while (distancia < 70);
-
-
+		} while (distancia < distanciaMinima);
 
 		comida = listaPos[indexC1].coord;
-
-	
-
-
 
 		for (Pixel i : listaPos)
 		{
@@ -66,18 +58,14 @@ protected:
 			
 		}
 		iteracaoAtual.push_back(listaPos[index]);
-		// this_thread::sleep_for(10000ms);
 
 		return true;
 
 	}
 
 
-
-
-
-
-	
+	// Os 3 metodos abaixos estão também nas classes de MetodosProv.h e Bloop, contudo por algum motivo o desempenho está muito ruim quando uso-os de forma separada
+	// infelizmente não terei tempo de corrigir isso, por esse motivo deixei todos os metodos aqui
 
 	bool CoordenadaEParede(Coordenada coord, vector<Pixel>v)
 	{
@@ -104,11 +92,8 @@ protected:
 				statusContamicao = true;
 			}
 		}
-
-
 		return statusContamicao;
 	}
-
 
 	vector<Pixel> ReproduzirFungo(vector<Pixel> lab)
 	{
@@ -121,7 +106,7 @@ protected:
 				continuar = false;
 				break;
 			}
-			for (Coordenada coord : pixel.coord.GetPosVizinhas(2000,2000))
+			for (Coordenada coord : pixel.coord.GetPosVizinhas(100,100))
 			{
 				if (!CoordenadaEParede(coord, listaPos) && !CoordenadaJaContaminada(coord, listaContaminada))
 				{
@@ -135,13 +120,12 @@ protected:
 		return pixelsVizinhos;
 	}
 
-	// Called by olcConsoleGameEngine
-	int controle = 0;
+	int numIteracoes = 0;
 	virtual bool OnUserUpdate(float fElapsedTime)
 	{
 		if (continuar == true)
 		{
-			if (controle == 0)
+			if (numIteracoes == 0)
 			{
 				for (Pixel i : iteracaoAtual)
 				{
@@ -149,6 +133,7 @@ protected:
 					Draw(i.coord.posx, i.coord.posy, i.tipoPixel, i.cor);
 				}
 				proxIteracao = ReproduzirFungo(iteracaoAtual);
+				//proxIteracao = bloob.ReproduzirFungo(iteracaoAtual, comida, listaContaminada, listaPos, &continuar);
 
 			}
 			else
@@ -163,14 +148,14 @@ protected:
 				}
 				proxIteracao.clear();
 				proxIteracao = ReproduzirFungo(iteracaoAtual);
+				//proxIteracao = bloob.ReproduzirFungo(iteracaoAtual, comida, listaContaminada, listaPos, &continuar);
 
 
 			}
 
-			controle++;
+			numIteracoes++;
 		}
 		
-
 		this_thread::sleep_for(10ms);
 
 		return true;

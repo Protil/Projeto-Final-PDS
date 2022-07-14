@@ -16,7 +16,7 @@ public:
 	int* m_maze;
 
 
-	// Some bit fields for convenience
+	// Enumeração usada pelo algoritmo de criação de labirinto
 	enum
 	{
 		CELL_PATH_N = 0x01,
@@ -27,14 +27,13 @@ public:
 	};
 
 
-	// Algorithm variables
 	int  m_nVisitedCells;
-	stack<pair<int, int>> m_stack;	// (x, y) coordinate pairs
 	int  m_nPathWidth;
+	// Par que representa as coordenadas, a primeira é x a segunda é y 
+	stack<pair<int, int>> m_stack;	// (x, y) coordinate pairs
 
 
 public:
-	// Called by olcConsoleGameEngine
 	void SetVariaveis();
 	vector<Pixel> posicoesECores();
 };
