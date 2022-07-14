@@ -127,12 +127,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bloop.cpp" />
     <ClCompile Include="Coordenada.cpp" />
     <ClCompile Include="CriarLabirinto.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Pixel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bloop.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="Coordenada.h" />
     <ClInclude Include="CriarLabirinto.h" />

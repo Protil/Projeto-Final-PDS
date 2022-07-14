@@ -961,7 +961,10 @@ private:
 				wchar_t s[256];
 
 				// Comentei para tirar o titulo do console
-				swprintf_s(s, 256, L"OneLoneCoder.com - Console Game Engine - %s - FPS: %3.2f", m_sAppName.c_str(), 1.0f / fElapsedTime);
+				// swprintf_s(s, 256, L"OneLoneCoder.com - Console Game Engine - %s - FPS: %3.2f", m_sAppName.c_str(), 1.0f / fElapsedTime);
+				// swprintf_s(s, 256, L"Trabalho Bloob - FPS: %3.2f", 1.0f / fElapsedTime);
+				swprintf_s(s, 256, L"Trabalho Bloob");
+
 				SetConsoleTitle(s);
 				WriteConsoleOutput(m_hConsole, m_bufScreen, { (short)m_nScreenWidth, (short)m_nScreenHeight }, { 0,0 }, &m_rectWindow);
 			}

@@ -4,7 +4,7 @@
 #include <vector>
 #include "Pixel.h"
 #include <algorithm>
-
+#include <math.h>
 using namespace std;
 
 
@@ -19,33 +19,65 @@ private:
 	vector<Pixel> iteracaoAtual;
 	vector<Pixel> proxIteracao;
 	vector<Pixel> listaContaminada;
+	Coordenada comida = Coordenada(0,0);
 
 
 protected:
 	// Called by olcConsoleGameEngine
+	int contador = 1;
+	vector<Pixel> posicoesASeremOCupadas;
+	vector<Pixel> todasAsPos;
+	vector<Pixel> posParedeOuBloob;
+	bool continuar = true;
+
 	virtual bool OnUserCreate()
 	{
 		lab.SetVariaveis();	
 		listaPos = lab.posicoesECores();
 		// Aparentemente aqui so tem as posicoes que não sao parede, mas nao tenho certeza
 		int index = rand() % (listaPos.size()+ 1);
-		iteracaoAtual.push_back(listaPos[index]);
+		//int index = 4049;
+		int indexC1;
+		
+		float distancia;
+		
+		do
+		{
+			indexC1 = rand() % (listaPos.size() + 1);
+
+			distancia = pow(pow(listaPos[index].coord.posx + listaPos[index].coord.posy, 2) + pow(listaPos[indexC1].coord.posx + listaPos[indexC1].coord.posy, 2), .5);
+		} while (distancia < 70);
+
+
+
+		comida = listaPos[indexC1].coord;
+
+	
+
+
 
 		for (Pixel i : listaPos)
 		{
-
+			if (i.coord.posx == comida.posx && i.coord.posy == comida.posy)
+			{
+				i.cor = 13;
+			}
 			Draw(i.coord.posx, i.coord.posy, i.tipoPixel, i.cor);
 			
 		}
+		iteracaoAtual.push_back(listaPos[index]);
+		// this_thread::sleep_for(10000ms);
 
 		return true;
 
 	}
 
 
-	int contador = 1;
-	vector<Pixel> posicoesASeremOCupadas;
 
+
+
+
+	
 
 	bool CoordenadaEParede(Coordenada coord, vector<Pixel>v)
 	{
@@ -58,8 +90,6 @@ protected:
 				statusParede = false;
 			}
 		}
-		
-		
 		return statusParede;
 	}
 
@@ -86,6 +116,11 @@ protected:
 
 		for (Pixel pixel : lab)
 		{
+			if (pixel.coord.posx == comida.posx && pixel.coord.posy == comida.posy)
+			{
+				continuar = false;
+				break;
+			}
 			for (Coordenada coord : pixel.coord.GetPosVizinhas(2000,2000))
 			{
 				if (!CoordenadaEParede(coord, listaPos) && !CoordenadaJaContaminada(coord, listaContaminada))
@@ -98,38 +133,43 @@ protected:
 		}
 
 		return pixelsVizinhos;
-
 	}
 
 	// Called by olcConsoleGameEngine
 	int controle = 0;
 	virtual bool OnUserUpdate(float fElapsedTime)
 	{
-		if (controle == 0)
+		if (continuar == true)
 		{
-			for (Pixel i : iteracaoAtual)
+			if (controle == 0)
 			{
-				i.cor = 2;
-				Draw(i.coord.posx, i.coord.posy, i.tipoPixel, i.cor);
-			}
-			proxIteracao = ReproduzirFungo(iteracaoAtual);
+				for (Pixel i : iteracaoAtual)
+				{
+					i.cor = 2;
+					Draw(i.coord.posx, i.coord.posy, i.tipoPixel, i.cor);
+				}
+				proxIteracao = ReproduzirFungo(iteracaoAtual);
 
-		}
-		else 
-		{
-			iteracaoAtual.clear();
-			iteracaoAtual = proxIteracao;
-			for (Pixel i : proxIteracao)
-			{
-				i.cor = 2;
-				Draw(i.coord.posx, i.coord.posy, i.tipoPixel, i.cor);
 			}
-			proxIteracao.clear();
-			proxIteracao = ReproduzirFungo(iteracaoAtual);
+			else
+			{
+
+				iteracaoAtual.clear();
+				iteracaoAtual = proxIteracao;
+				for (Pixel i : proxIteracao)
+				{
+					i.cor = 2;
+					Draw(i.coord.posx, i.coord.posy, i.tipoPixel, i.cor);
+				}
+				proxIteracao.clear();
+				proxIteracao = ReproduzirFungo(iteracaoAtual);
+
+
+			}
+
+			controle++;
 		}
 		
-
-		controle++;
 
 		this_thread::sleep_for(10ms);
 

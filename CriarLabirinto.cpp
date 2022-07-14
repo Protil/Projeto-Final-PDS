@@ -17,6 +17,7 @@ void CriarLabirinto::SetVariaveis()
 
 
 	srand(time(0));
+	//srand(63465);
 
 	// Slow down for animation
 	//this_thread::sleep_for(10ms);
